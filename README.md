@@ -22,7 +22,7 @@ pre-commit install --hook-type pre-push --config .pre-push-config.yaml
 
 |  | Your ID | Your ID | Your ID | Your ID |
 |---|:-:|---|---|---|
-| Week1 |   |   |   |   |
+| Week1 |   |   |   |coookie89   |
 | Week2 |   |   |   |   |
 | Week3 |   |   |   |   |
 | Week4 |   |   |   |   |
