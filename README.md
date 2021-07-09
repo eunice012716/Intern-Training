@@ -20,9 +20,9 @@ pre-commit install --hook-type pre-push --config .pre-push-config.yaml
 
 ### Progress
 
-|  | Your ID | Your ID | Your ID | Your ID |
+|  | Your ID | Your ID | Your ID | coookie89  |
 |---|:-:|---|---|---|
-| Week1 |   |   |   |coookie89   |
+| Week1 |   |   |   |   |
 | Week2 |   |   |   |   |
 | Week3 |   |   |   |   |
 | Week4 |   |   |   |   |
