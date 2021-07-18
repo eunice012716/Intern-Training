@@ -4,7 +4,8 @@ import numpy as np
 
 def get_random_na_dataframe(dataFrame: pd.DataFrame) -> pd.DataFrame:
     # random insert na to dataframe
-    return dataFrame.mask(np.random.random(dataFrame.shape) < 0.2)
+    na_probability = 0.2
+    return dataFrame.mask(np.random.random(dataFrame.shape) < na_probability)
 
 
 def process_data(dataFrame: pd.DataFrame) -> pd.DataFrame:
@@ -17,8 +18,8 @@ def process_data(dataFrame: pd.DataFrame) -> pd.DataFrame:
 
 
 if __name__ == "__main__":
-    with open("example_dataset.csv", "r") as f:
-        dataFrame = pd.read_csv(f)
+    with open("example_dataset.csv", "r", encoding="utf-8") as example_dataset:
+        dataFrame = pd.read_csv(example_dataset)
         inputs, outputs = (
             get_random_na_dataframe(dataFrame.iloc[:, :-1]),
             dataFrame.iloc[:, -1],
