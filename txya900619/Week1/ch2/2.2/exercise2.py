@@ -1,6 +1,7 @@
-from exercise1 import get_random_na_dataframe, process_data
 import pandas as pd
 import torch
+
+from exercise1 import get_random_na_dataframe, process_data
 
 if __name__ == "__main__":
     with open("example_dataset.csv", "r") as f:
