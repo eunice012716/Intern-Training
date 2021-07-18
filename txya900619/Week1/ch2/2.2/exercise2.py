@@ -1,4 +1,4 @@
-from exercise1 import getRandomNaDataFrame, processData
+from exercise1 import get_random_na_dataframe, process_data
 import pandas as pd
 import torch
 
@@ -6,7 +6,7 @@ if __name__ == "__main__":
     with open("example_dataset.csv", "r") as f:
         dataFrame = pd.read_csv(f)
         inputs, outputs = (
-            processData(getRandomNaDataFrame(dataFrame.iloc[:, :-1])),
+            process_data(get_random_na_dataframe(dataFrame.iloc[:, :-1])),
             dataFrame.iloc[:, -1],
         )
 
