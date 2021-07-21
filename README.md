@@ -22,7 +22,7 @@ pre-commit install --hook-type pre-push --config .pre-push-config.yaml
 
 |  | txya900619 | eunice012716 | u08410006 | coookie89 |
 |---|:-:|---|---|---|
-| Week1 | 2021/07/18 | 2021/07/21 |   |   |
+| Week1 | 2021/07/18 |   | 2021/07/21 |   |
 | Week2 |   |   |   |   |
 | Week3 |   |   |   |   |
 | Week4 |   |   |   |   |
