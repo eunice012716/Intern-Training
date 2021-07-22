@@ -1,3 +1,5 @@
+import os
+
 import torch
 import torchvision
 from d2l import torch as d2l
@@ -47,7 +49,8 @@ def get_dataloader_workers():
     """
     Use 4 processes to read the data.
     """
-    return 4
+    cpuCount = os.cpu_count()
+    return cpuCount
 
 
 def load_data_fashion_mnist(batch_size, resize=None):
