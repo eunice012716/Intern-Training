@@ -1,5 +1,6 @@
 import torch
 
-print(dir(torch.distributions))
+if __name__ == "__main__":
+    print(dir(torch.distributions))
 
-print(torch.ones(4))
+    torch.ones(4)

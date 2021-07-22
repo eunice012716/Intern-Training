@@ -3,32 +3,31 @@ from IPython import display
 from d2l import torch as d2l
 
 
-def f(x):
+def function_(x):
+    """example for this topic caculus
+       f(x) = 3 * x^2 - 4 * x """
     return 3 * x ** 2 - 4 * x
 
 
 def numerical_lim(f, x, h):
+    """numerical result ( do Differentiation )
+        f is what function used
+        x is coordinate of x
+        h is like dx"""
     return (f(x + h) - f(x)) / h
 
 
-h = 0.1
-for i in range(5):
-    print(f"h={h:.5f}, numerical limit={numerical_lim(f, 1, h):.5f}")
-    h *= 0.1
-
-
-def use_svg_display():  # @save
+def use_svg_display():
     """Use the svg format to display a plot in Jupyter."""
     display.set_matplotlib_formats("svg")
 
 
-def set_figsize(figsize=(3.5, 2.5)):  # @save
+def set_figsize(figsize=(3.5, 2.5)):
     """Set the figure size for matplotlib."""
     use_svg_display()
     d2l.plt.rcParams["figure.figsize"] = figsize
 
 
-# @save
 def set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend):
     """Set the axes for matplotlib."""
     axes.set_xlabel(xlabel)
@@ -42,7 +41,6 @@ def set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend):
     axes.grid()
 
 
-# @save
 def plot(
     X,
     Y=None,
@@ -57,7 +55,8 @@ def plot(
     figsize=(3.5, 2.5),
     axes=None,
 ):
-    """Plot data points."""
+    """Plot data points.
+        return axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend for set_axes()"""
     if legend is None:
         legend = []
 
@@ -87,8 +86,22 @@ def plot(
             axes.plot(x, y, fmt)
         else:
             axes.plot(y, fmt)
-    set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend)
+    # set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend)
+    return axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend
 
 
-x = np.arange(0, 3, 0.1)
-plot(x, [f(x), 2 * x - 3], "x", "f(x)", legend=["f(x)", "Tangent line (x=1)"])
+if __name__ == "__main__":
+    x = np.arange(0, 3, 0.1)
+    plot(
+        x,
+        [function_(x), 2 * x - 3],
+        "x",
+        "function_(x)",
+        legend=["function_(x)", "Tangent line (x=1)"],
+    )
+    h = 0.1  # h is like dx
+    for _ in range(5):
+        print(
+            f"h={h:.5f}, numerical limit={numerical_lim(function_, 1, h):.5f}"
+        )
+        h *= 0.1

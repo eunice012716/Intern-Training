@@ -2,17 +2,7 @@ import torch
 from IPython import display
 from d2l import torch as d2l
 
-batch_size = 256
-train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size)
-
-num_inputs = 784
-num_outputs = 10
-
-W = torch.normal(0, 0.01, size=(num_inputs, num_outputs), requires_grad=True)
-b = torch.zeros(num_outputs, requires_grad=True)
-
-X = torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
-print(X.sum(0, keepdim=True), X.sum(1, keepdim=True))
+THIS_IS_THE_CONSTANT_lr = 0.1  # used in updater
 
 
 def softmax(X):
@@ -21,28 +11,15 @@ def softmax(X):
     return X_exp / partition  # The broadcasting mechanism is applied here
 
 
-X = torch.normal(0, 1, (2, 5))
-X_prob = softmax(X)
-print(X_prob, X_prob.sum(1))
-
-
 def net(X):
     return softmax(torch.matmul(X.reshape((-1, W.shape[0])), W) + b)
-
-
-y = torch.tensor([0, 2])
-y_hat = torch.tensor([[0.1, 0.3, 0.6], [0.3, 0.2, 0.5]])
-print(y_hat[[0, 1], y])
 
 
 def cross_entropy(y_hat, y):
     return -torch.log(y_hat[range(len(y_hat)), y])
 
 
-print(cross_entropy(y_hat, y))
-
-
-def accuracy(y_hat, y):  # @save
+def accuracy(y_hat, y):
     """Compute the number of correct predictions."""
     if len(y_hat.shape) > 1 and y_hat.shape[1] > 1:
         y_hat = y_hat.argmax(axis=1)
@@ -50,10 +27,7 @@ def accuracy(y_hat, y):  # @save
     return float(cmp.type(y.dtype).sum())
 
 
-print(accuracy(y_hat, y) / len(y))
-
-
-def evaluate_accuracy(net, data_iter):  # @save
+def evaluate_accuracy(net, data_iter):
     """Compute the accuracy for a model on a dataset."""
     if isinstance(net, torch.nn.Module):
         net.eval()  # Set the model to evaluation mode
@@ -65,26 +39,7 @@ def evaluate_accuracy(net, data_iter):  # @save
     return metric[0] / metric[1]
 
 
-class Accumulator:  # @save
-    """For accumulating sums over `n` variables."""
-
-    def __init__(self, n):
-        self.data = [0.0] * n
-
-    def add(self, *args):
-        self.data = [a + float(b) for a, b in zip(self.data, args)]
-
-    def reset(self):
-        self.data = [0.0] * len(self.data)
-
-    def __getitem__(self, idx):
-        return self.data[idx]
-
-
-print(evaluate_accuracy(net, test_iter))
-
-
-def train_epoch_ch3(net, train_iter, loss, updater):  # @save
+def train_epoch_ch3(net, train_iter, loss, updater):
     """The training loop defined in Chapter 3."""
     # Set the model to training mode
     if isinstance(net, torch.nn.Module):
@@ -110,7 +65,55 @@ def train_epoch_ch3(net, train_iter, loss, updater):  # @save
     return metric[0] / metric[2], metric[1] / metric[2]
 
 
-class Animator:  # @save
+def train_ch3(net, train_iter, test_iter, loss, num_epochs, updater):
+    """Train a model (defined in Chapter 3)."""
+    animator = Animator(
+        xlabel="epoch",
+        xlim=[1, num_epochs],
+        ylim=[0.3, 0.9],
+        legend=["train loss", "train acc", "test acc"],
+    )
+    for epoch in range(num_epochs):
+        train_metrics = train_epoch_ch3(net, train_iter, loss, updater)
+        test_acc = evaluate_accuracy(net, test_iter)
+        animator.add(epoch + 1, train_metrics + (test_acc,))
+    train_loss, train_acc = train_metrics
+    assert train_loss < 0.5, train_loss
+    assert train_acc <= 1 and train_acc > 0.7, train_acc
+    assert test_acc <= 1 and test_acc > 0.7, test_acc
+
+
+def updater(batch_size):
+    return d2l.sgd([W, b], THIS_IS_THE_CONSTANT_lr, batch_size)
+
+
+def predict_ch3(net, test_iter, n=6):
+    """Predict labels (defined in Chapter 3)."""
+    for X, y in test_iter:
+        break
+    trues = d2l.get_fashion_mnist_labels(y)
+    preds = d2l.get_fashion_mnist_labels(net(X).argmax(axis=1))
+    titles = [true + "\n" + pred for true, pred in zip(trues, preds)]
+    d2l.show_images(X[0:n].reshape((n, 28, 28)), 1, n, titles=titles[0:n])
+
+
+class Accumulator:
+    """For accumulating sums over `n` variables."""
+
+    def __init__(self, n):
+        self.data = [0.0] * n
+
+    def add(self, *args):
+        self.data = [a + float(b) for a, b in zip(self.data, args)]
+
+    def reset(self):
+        self.data = [0.0] * len(self.data)
+
+    def __getitem__(self, idx):
+        return self.data[idx]
+
+
+class Animator:
     """For plotting data in animation."""
 
     def __init__(
@@ -165,43 +168,36 @@ class Animator:  # @save
         display.clear_output(wait=True)
 
 
-def train_ch3(net, train_iter, test_iter, loss, num_epochs, updater):  # @save
-    """Train a model (defined in Chapter 3)."""
-    animator = Animator(
-        xlabel="epoch",
-        xlim=[1, num_epochs],
-        ylim=[0.3, 0.9],
-        legend=["train loss", "train acc", "test acc"],
+if __name__ == "__main__":
+    batch_size = 256
+    train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size)
+
+    num_inputs = 784
+    num_outputs = 10
+
+    W = torch.normal(
+        0, 0.01, size=(num_inputs, num_outputs), requires_grad=True
     )
-    for epoch in range(num_epochs):
-        train_metrics = train_epoch_ch3(net, train_iter, loss, updater)
-        test_acc = evaluate_accuracy(net, test_iter)
-        animator.add(epoch + 1, train_metrics + (test_acc,))
-    train_loss, train_acc = train_metrics
-    assert train_loss < 0.5, train_loss
-    assert train_acc <= 1 and train_acc > 0.7, train_acc
-    assert test_acc <= 1 and test_acc > 0.7, test_acc
+    b = torch.zeros(num_outputs, requires_grad=True)
 
+    X = torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+    print(X.sum(0, keepdim=True), X.sum(1, keepdim=True))
 
-lr = 0.1
+    X = torch.normal(0, 1, (2, 5))
+    X_prob = softmax(X)
+    print(X_prob, X_prob.sum(1))
 
+    y = torch.tensor([0, 2])
+    y_hat = torch.tensor([[0.1, 0.3, 0.6], [0.3, 0.2, 0.5]])
+    print(y_hat[[0, 1], y])
 
-def updater(batch_size):
-    return d2l.sgd([W, b], lr, batch_size)
+    print(cross_entropy(y_hat, y))
 
+    print(accuracy(y_hat, y) / len(y))
 
-num_epochs = 10
-train_ch3(net, train_iter, test_iter, cross_entropy, num_epochs, updater)
+    print(evaluate_accuracy(net, test_iter))
 
+    num_epochs = 10
+    train_ch3(net, train_iter, test_iter, cross_entropy, num_epochs, updater)
 
-def predict_ch3(net, test_iter, n=6):  # @save
-    """Predict labels (defined in Chapter 3)."""
-    for X, y in test_iter:
-        break
-    trues = d2l.get_fashion_mnist_labels(y)
-    preds = d2l.get_fashion_mnist_labels(net(X).argmax(axis=1))
-    titles = [true + "\n" + pred for true, pred in zip(trues, preds)]
-    d2l.show_images(X[0:n].reshape((n, 28, 28)), 1, n, titles=titles[0:n])
-
-
-predict_ch3(net, test_iter)
+    predict_ch3(net, test_iter)
