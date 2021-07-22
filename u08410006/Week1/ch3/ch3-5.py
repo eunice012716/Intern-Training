@@ -6,7 +6,9 @@ from torchvision import transforms
 
 
 def get_fashion_mnist_labels(labels):
-    """Return text labels for the Fashion-MNIST dataset."""
+    """
+    Return text labels for the Fashion-MNIST dataset.
+    """
     text_labels = [
         "t-shirt",
         "trouser",
@@ -19,7 +21,7 @@ def get_fashion_mnist_labels(labels):
         "bag",
         "ankle boot",
     ]
-    return [text_labels[int(i)] for i in labels]
+    return [text_labels[int(index)] for index in labels]
 
 
 def show_images(imgs, num_rows, num_cols, titles=None, scale=1.5):
@@ -36,20 +38,24 @@ def show_images(imgs, num_rows, num_cols, titles=None, scale=1.5):
             ax.imshow(img)
         ax.axes.get_xaxis().set_visible(False)
         ax.axes.get_yaxis().set_visible(False)
-        if titles:
+        if titles is not None:
             ax.set_title(titles[i])
     return axes
 
 
 def get_dataloader_workers():
-    """Use 4 processes to read the data."""
+    """
+    Use 4 processes to read the data.
+    """
     return 4
 
 
 def load_data_fashion_mnist(batch_size, resize=None):
-    """Download the Fashion-MNIST dataset and then load it into memory."""
+    """
+    Download the Fashion-MNIST dataset and then load it into memory.
+    """
     trans = [transforms.ToTensor()]
-    if resize:
+    if resize is not None:
         trans.insert(0, transforms.Resize(resize))
     trans = transforms.Compose(trans)
     mnist_train = torchvision.datasets.FashionMNIST(
@@ -91,14 +97,14 @@ if __name__ == "__main__":
     print(len(mnist_train), len(mnist_test))
 
     print(mnist_train[0][0].shape)
-    X, y = next(iter(data.DataLoader(mnist_train, batch_size=18)))
+    X, y = next(iter(data.DataLoader(mnist_train, BATCH_SIZE=18)))
     show_images(X.reshape(18, 28, 28), 2, 9, titles=get_fashion_mnist_labels(y))
 
-    batch_size = 256
+    BATCH_SIZE = 256
 
     train_iter = data.DataLoader(
         mnist_train,
-        batch_size,
+        BATCH_SIZE,
         shuffle=True,
         num_workers=get_dataloader_workers(),
     )
@@ -111,4 +117,3 @@ if __name__ == "__main__":
     train_iter, test_iter = load_data_fashion_mnist(32, resize=64)
     for X, y in train_iter:
         print(X.shape, X.dtype, y.shape, y.dtype)
-        break

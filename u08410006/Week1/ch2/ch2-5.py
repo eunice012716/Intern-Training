@@ -2,7 +2,9 @@ import torch
 
 
 def function_(a):
-    """example for Computing the Gradient of Python Control Flow"""
+    """
+    example for Computing the Gradient of Python Control Flow
+    """
     b = a * 2
     while b.norm() < 1000:
         b = b * 2

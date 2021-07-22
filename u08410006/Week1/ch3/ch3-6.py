@@ -2,36 +2,57 @@ import torch
 from IPython import display
 from d2l import torch as d2l
 
-THIS_IS_THE_CONSTANT_lr = 0.1  # used in updater
+LEARNING_RATE = 0.1  # used in updater
 
 
 def softmax(X):
+    """
+    softmax is the operation define in ch3.6.2
+    """
     X_exp = torch.exp(X)
     partition = X_exp.sum(1, keepdim=True)
     return X_exp / partition  # The broadcasting mechanism is applied here
 
 
 def net(X):
-    return softmax(torch.matmul(X.reshape((-1, W.shape[0])), W) + b)
+    """
+    net defines how the input is mapped to the output through the network.
+    """
+    return softmax(
+        torch.matmul(X.reshape((-1, Weight.shape[0])), Weight) + biases
+    )
 
 
 def cross_entropy(y_hat, y):
+    """
+    cross-entropy takes the negative log-likelihood of the predicted probability assigned to the true label
+    """
     return -torch.log(y_hat[range(len(y_hat)), y])
 
 
 def accuracy(y_hat, y):
-    """Compute the number of correct predictions."""
-    if len(y_hat.shape) > 1 and y_hat.shape[1] > 1:
+    """
+    Compute the number of correct predictions.
+    """
+    length_gt_1 = len(y_hat.shape) > 1  # gt is greater than
+    y_hat_shape_gt_1 = y_hat.shape[1] > 1
+
+    if length_gt_1 and y_hat_shape_gt_1:
         y_hat = y_hat.argmax(axis=1)
     cmp = y_hat.type(y.dtype) == y
     return float(cmp.type(y.dtype).sum())
 
 
 def evaluate_accuracy(net, data_iter):
-    """Compute the accuracy for a model on a dataset."""
+    """
+    Compute the accuracy for a model on a dataset.
+    """
     if isinstance(net, torch.nn.Module):
         net.eval()  # Set the model to evaluation mode
-    metric = Accumulator(2)  # No. of correct predictions, no. of predictions
+    accum_num = 2
+    metric = Accumulator(
+        accum_num
+    )  # No. of correct predictions, no. of predictions
 
     with torch.no_grad():
         for X, y in data_iter:
@@ -40,12 +61,15 @@ def evaluate_accuracy(net, data_iter):
 
 
 def train_epoch_ch3(net, train_iter, loss, updater):
-    """The training loop defined in Chapter 3."""
+    """
+    The training loop defined in Chapter 3.
+    """
     # Set the model to training mode
     if isinstance(net, torch.nn.Module):
         net.train()
     # Sum of training loss, sum of training accuracy, no. of examples
-    metric = Accumulator(3)
+    accum_num = 3
+    metric = Accumulator(accum_num)
     for X, y in train_iter:
         # Compute gradients and update parameters
         y_hat = net(X)
@@ -66,7 +90,9 @@ def train_epoch_ch3(net, train_iter, loss, updater):
 
 
 def train_ch3(net, train_iter, test_iter, loss, num_epochs, updater):
-    """Train a model (defined in Chapter 3)."""
+    """
+    Train a model (defined in Chapter 3).
+    """
     animator = Animator(
         xlabel="epoch",
         xlim=[1, num_epochs],
@@ -78,19 +104,19 @@ def train_ch3(net, train_iter, test_iter, loss, num_epochs, updater):
         test_acc = evaluate_accuracy(net, test_iter)
         animator.add(epoch + 1, train_metrics + (test_acc,))
     train_loss, train_acc = train_metrics
-    assert train_loss < 0.5, train_loss
-    assert train_acc <= 1 and train_acc > 0.7, train_acc
-    assert test_acc <= 1 and test_acc > 0.7, test_acc
+    assert train_loss < 0.5, "train_loss wrong"
+    assert train_acc <= 1 and train_acc > 0.7, "train_acc wrong"
+    assert test_acc <= 1 and test_acc > 0.7, "test_acc wrong    "
 
 
 def updater(batch_size):
-    return d2l.sgd([W, b], THIS_IS_THE_CONSTANT_lr, batch_size)
+    return d2l.sgd([Weight, biases], LEARNING_RATE, batch_size)
 
 
 def predict_ch3(net, test_iter, n=6):
-    """Predict labels (defined in Chapter 3)."""
-    for X, y in test_iter:
-        break
+    """
+    Predict labels (defined in Chapter 3).
+    """
     trues = d2l.get_fashion_mnist_labels(y)
     preds = d2l.get_fashion_mnist_labels(net(X).argmax(axis=1))
     titles = [true + "\n" + pred for true, pred in zip(trues, preds)]
@@ -98,13 +124,18 @@ def predict_ch3(net, test_iter, n=6):
 
 
 class Accumulator:
-    """For accumulating sums over `n` variables."""
+    """
+    For accumulating sums over `var_num` variables.
+    """
 
-    def __init__(self, n):
-        self.data = [0.0] * n
+    def __init__(self, var_num):
+        self.data = [0.0] * var_num  # var_num is the number of varialbes
 
     def add(self, *args):
-        self.data = [a + float(b) for a, b in zip(self.data, args)]
+        self.data = [
+            num_correct_prediction + float(num_prediction)
+            for num_correct_prediction, num_prediction in zip(self.data, args)
+        ]
 
     def reset(self):
         self.data = [0.0] * len(self.data)
@@ -114,7 +145,9 @@ class Accumulator:
 
 
 class Animator:
-    """For plotting data in animation."""
+    """
+    For plotting data in animation.
+    """
 
     def __init__(
         self,
@@ -169,16 +202,16 @@ class Animator:
 
 
 if __name__ == "__main__":
-    batch_size = 256
-    train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size)
+    BATCH_SIZE = 256
+    train_iter, test_iter = d2l.load_data_fashion_mnist(BATCH_SIZE)
 
-    num_inputs = 784
-    num_outputs = 10
+    NUM_INPUTS = 784
+    NUM_OUTPUTS = 10
 
-    W = torch.normal(
-        0, 0.01, size=(num_inputs, num_outputs), requires_grad=True
+    Weight = torch.normal(
+        0, 0.01, size=(NUM_INPUTS, NUM_OUTPUTS), requires_grad=True
     )
-    b = torch.zeros(num_outputs, requires_grad=True)
+    biases = torch.zeros(NUM_OUTPUTS, requires_grad=True)
 
     X = torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
     print(X.sum(0, keepdim=True), X.sum(1, keepdim=True))
@@ -197,7 +230,7 @@ if __name__ == "__main__":
 
     print(evaluate_accuracy(net, test_iter))
 
-    num_epochs = 10
-    train_ch3(net, train_iter, test_iter, cross_entropy, num_epochs, updater)
+    NUM_EPOCHS = 10
+    train_ch3(net, train_iter, test_iter, cross_entropy, NUM_EPOCHS, updater)
 
     predict_ch3(net, test_iter)

@@ -9,8 +9,8 @@ def init_weights(m):
 
 
 if __name__ == "__main__":
-    batch_size = 256
-    train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size)
+    BATCH_SIZE = 256
+    train_iter, test_iter = d2l.load_data_fashion_mnist(BATCH_SIZE)
 
     # PyTorch does not implicitly reshape the inputs. Thus we define the flatten
     # layer to reshape the inputs before the linear layer in our network
@@ -22,5 +22,5 @@ if __name__ == "__main__":
 
     trainer = torch.optim.SGD(net.parameters(), lr=0.1)
 
-    num_epochs = 10
-    d2l.train_ch3(net, train_iter, test_iter, loss, num_epochs, trainer)
+    NUM_EPOCHS = 10
+    d2l.train_ch3(net, train_iter, test_iter, loss, NUM_EPOCHS, trainer)

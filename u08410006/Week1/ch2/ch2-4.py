@@ -4,32 +4,42 @@ from d2l import torch as d2l
 
 
 def function_(x):
-    """example for this topic caculus
-       f(x) = 3 * x^2 - 4 * x """
+    """
+    example for this topic caculus
+    f(x) = 3 * x^2 - 4 * x
+    """
     return 3 * x ** 2 - 4 * x
 
 
 def numerical_lim(f, x, h):
-    """numerical result ( do Differentiation )
-        f is what function used
-        x is coordinate of x
-        h is like dx"""
+    """
+    numerical result ( do Differentiation )
+    f is what function used
+    x is coordinate of x
+    h is like dx
+    """
     return (f(x + h) - f(x)) / h
 
 
 def use_svg_display():
-    """Use the svg format to display a plot in Jupyter."""
+    """
+    Use the svg format to display a plot in Jupyter.
+    """
     display.set_matplotlib_formats("svg")
 
 
 def set_figsize(figsize=(3.5, 2.5)):
-    """Set the figure size for matplotlib."""
+    """
+    Set the figure size for matplotlib.
+    """
     use_svg_display()
     d2l.plt.rcParams["figure.figsize"] = figsize
 
 
 def set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend):
-    """Set the axes for matplotlib."""
+    """
+    Set the axes for matplotlib.
+    """
     axes.set_xlabel(xlabel)
     axes.set_ylabel(ylabel)
     axes.set_xscale(xscale)
@@ -55,8 +65,10 @@ def plot(
     figsize=(3.5, 2.5),
     axes=None,
 ):
-    """Plot data points.
-        return axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend for set_axes()"""
+    """
+    Plot data points.
+    return axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend for set_axes()
+    """
     if legend is None:
         legend = []
 
@@ -86,7 +98,6 @@ def plot(
             axes.plot(x, y, fmt)
         else:
             axes.plot(y, fmt)
-    # set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend)
     return axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend
 
 
