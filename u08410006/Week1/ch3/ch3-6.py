@@ -107,9 +107,8 @@ def train_ch3(net, train_iter, test_iter, loss, num_epochs, updater):
     assert test_acc <= 1 and test_acc > 0.7, "test_acc wrong    "
 
 
-def updater(batch_size):
-    LEARNING_RATE = 0.1
-    return d2l.sgd([weight, biases], LEARNING_RATE, batch_size)
+def updater(batch_size, learing_rate):
+    return d2l.sgd([weight, biases], learing_rate, batch_size)
 
 
 def predict_ch3(net, test_iter, n=6):
@@ -201,6 +200,7 @@ class Animator:
 
 
 if __name__ == "__main__":
+    LEARNING_RATE = 0.1
     BATCH_SIZE = 256
     NUM_INPUTS = 784
     NUM_OUTPUTS = 10
