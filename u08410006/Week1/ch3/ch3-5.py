@@ -49,8 +49,8 @@ def get_dataloader_workers():
     """
     Use 4 processes to read the data.
     """
-    cpuCount = os.cpu_count()
-    return cpuCount
+    cpu_count = os.cpu_count()
+    return cpu_count
 
 
 def load_data_fashion_mnist(batch_size, resize=None):
@@ -85,6 +85,8 @@ def load_data_fashion_mnist(batch_size, resize=None):
 
 if __name__ == "__main__":
 
+    BATCH_SIZE = 256
+
     d2l.use_svg_display()
 
     # `ToTensor` converts the image data from PIL type to 32-bit floating point
@@ -102,8 +104,6 @@ if __name__ == "__main__":
     print(mnist_train[0][0].shape)
     X, y = next(iter(data.DataLoader(mnist_train, BATCH_SIZE=18)))
     show_images(X.reshape(18, 28, 28), 2, 9, titles=get_fashion_mnist_labels(y))
-
-    BATCH_SIZE = 256
 
     train_iter = data.DataLoader(
         mnist_train,

@@ -39,7 +39,7 @@ def linreg(X, w, b):
     return torch.matmul(X, w) + b
 
 
-def squared_loss(y_hat, y):
+def calculate_loss(y_hat, y):
     """
     Squared loss.
     """
@@ -57,6 +57,10 @@ def sgd(params, lr, batch_size):
 
 
 if __name__ == "__main__":
+    BATCH_SIZE = 10
+    LR = 0.03
+    NUM_EPOCHS = 3
+
     true_w = torch.tensor([2, -3.4])
     true_b = 4.2
     features, labels = synthetic_data(true_w, true_b, 1000)
@@ -69,18 +73,13 @@ if __name__ == "__main__":
         features[:, (1)].detach().numpy(), labels.detach().numpy(), 1
     )
 
-    BATCH_SIZE = 10
-
     for X, y in data_iter(BATCH_SIZE, features, labels):
         print(X, "\n", y)
 
     w = torch.normal(0, 0.01, size=(2, 1), requires_grad=True)
     b = torch.zeros(1, requires_grad=True)
 
-    LR = 0.03
-    NUM_EPOCHS = 3
     net = linreg
-    calculate_loss = squared_loss
 
     for epoch in range(NUM_EPOCHS):
         for X, y in data_iter(BATCH_SIZE, features, labels):

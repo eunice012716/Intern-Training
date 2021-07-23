@@ -13,11 +13,13 @@ def load_array(data_arrays, batch_size, is_train=True):
 
 
 if __name__ == "__main__":
+    BATCH_SIZE = 10
+    NUM_EPOCHS = 3
+
     true_w = torch.tensor([2, -3.4])
     true_b = 4.2
     features, labels = d2l.synthetic_data(true_w, true_b, 1000)
 
-    BATCH_SIZE = 10
     data_iter = load_array((features, labels), BATCH_SIZE)
 
     print(next(iter(data_iter)))
@@ -31,8 +33,7 @@ if __name__ == "__main__":
 
     trainer = torch.optim.SGD(net.parameters(), lr=0.03)
 
-    num_epochs = 3
-    for epoch in range(num_epochs):
+    for epoch in range(NUM_EPOCHS):
         for X, y in data_iter:
             loss = calculate_loss(net(X), y)
             trainer.zero_grad()

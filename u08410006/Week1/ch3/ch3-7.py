@@ -10,6 +10,8 @@ def init_weights(m):
 
 if __name__ == "__main__":
     BATCH_SIZE = 256
+    NUM_EPOCHS = 10
+
     train_iter, test_iter = d2l.load_data_fashion_mnist(BATCH_SIZE)
 
     # PyTorch does not implicitly reshape the inputs. Thus we define the flatten
@@ -22,5 +24,4 @@ if __name__ == "__main__":
 
     trainer = torch.optim.SGD(net.parameters(), lr=0.1)
 
-    NUM_EPOCHS = 10
     d2l.train_ch3(net, train_iter, test_iter, loss, NUM_EPOCHS, trainer)

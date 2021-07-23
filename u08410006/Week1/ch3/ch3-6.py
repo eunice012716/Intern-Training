@@ -2,8 +2,6 @@ import torch
 from IPython import display
 from d2l import torch as d2l
 
-LEARNING_RATE = 0.1  # used in updater
-
 
 def softmax(X):
     """
@@ -19,7 +17,7 @@ def net(X):
     net defines how the input is mapped to the output through the network.
     """
     return softmax(
-        torch.matmul(X.reshape((-1, Weight.shape[0])), Weight) + biases
+        torch.matmul(X.reshape((-1, weight.shape[0])), weight) + biases
     )
 
 
@@ -110,7 +108,8 @@ def train_ch3(net, train_iter, test_iter, loss, num_epochs, updater):
 
 
 def updater(batch_size):
-    return d2l.sgd([Weight, biases], LEARNING_RATE, batch_size)
+    LEARNING_RATE = 0.1
+    return d2l.sgd([weight, biases], LEARNING_RATE, batch_size)
 
 
 def predict_ch3(net, test_iter, n=6):
@@ -203,12 +202,13 @@ class Animator:
 
 if __name__ == "__main__":
     BATCH_SIZE = 256
-    train_iter, test_iter = d2l.load_data_fashion_mnist(BATCH_SIZE)
-
     NUM_INPUTS = 784
     NUM_OUTPUTS = 10
+    NUM_EPOCHS = 10
 
-    Weight = torch.normal(
+    train_iter, test_iter = d2l.load_data_fashion_mnist(BATCH_SIZE)
+
+    weight = torch.normal(
         0, 0.01, size=(NUM_INPUTS, NUM_OUTPUTS), requires_grad=True
     )
     biases = torch.zeros(NUM_OUTPUTS, requires_grad=True)
@@ -230,7 +230,6 @@ if __name__ == "__main__":
 
     print(evaluate_accuracy(net, test_iter))
 
-    NUM_EPOCHS = 10
     train_ch3(net, train_iter, test_iter, cross_entropy, NUM_EPOCHS, updater)
 
     predict_ch3(net, test_iter)
