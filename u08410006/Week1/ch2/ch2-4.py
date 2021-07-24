@@ -1,6 +1,17 @@
+from typing import List, Optional
+from dataclasses import dataclass
+
 import numpy as np
+
 from IPython import display
 from d2l import torch as d2l
+
+
+@dataclass
+class PlotConfig:
+    X: float
+    Y: Optional[float]
+    legend: Optional[List]
 
 
 def function_(x):
@@ -52,15 +63,7 @@ def set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend):
 
 
 def plot(
-    X,
-    Y=None,
-    xlabel=None,
-    ylabel=None,
-    legend=None,
-    xlim=None,
-    ylim=None,
-    xscale="linear",
-    yscale="linear",
+    config: PlotConfig,
     fmts=("-", "m--", "g-.", "r:"),
     figsize=(3.5, 2.5),
     axes=None,
@@ -69,8 +72,8 @@ def plot(
     Plot data points.
     return axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend for set_axes()
     """
-    if legend is None:
-        legend = []
+    if config.legend is None:
+        config.legend = []
 
     set_figsize(figsize)
     axes = axes if axes else d2l.plt.gca()
@@ -84,33 +87,36 @@ def plot(
             and not hasattr(X[0], "__len__")
         )
 
-    if has_one_axis(X):
-        X = [X]
-    if Y is None:
+    if has_one_axis(config.X):
+        X = [config.X]
+    if config.Y is None:
         X, Y = [[]] * len(X), X
-    elif has_one_axis(Y):
-        Y = [Y]
+    elif has_one_axis(config.Y):
+        Y = [config.Y]
     if len(X) != len(Y):
         X = X * len(Y)
+
     axes.cla()
+
     for x, y, fmt in zip(X, Y, fmts):
         if len(x):
             axes.plot(x, y, fmt)
         else:
             axes.plot(y, fmt)
-    return axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend
 
 
 if __name__ == "__main__":
     x = np.arange(0, 3, 0.1)
-    plot(
-        x,
-        [function_(x), 2 * x - 3],
-        "x",
-        "function_(x)",
+    h = 0.1  # h is like dx
+
+    plot_config = PlotConfig(
+        X=x,
+        Y=[function_(x), 2 * x - 3],
         legend=["function_(x)", "Tangent line (x=1)"],
     )
-    h = 0.1  # h is like dx
+
+    plot(config=plot_config)
+
     for _ in range(5):
         print(
             f"h={h:.5f}, numerical limit={numerical_lim(function_, 1, h):.5f}"
