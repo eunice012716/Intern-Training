@@ -6,7 +6,8 @@ from IPython import display
 from d2l import torch as d2l
 
 
-def function(x):  # 題目給的f(x)函式, return y 值
+def function(x):
+    """題目給的f(x)函式, return y 值"""
     return x ** 3 - (1 / x)
 
 
@@ -26,7 +27,7 @@ def set_axes(axes, xlabel, ylabel, legend):
     axes.set_xlabel(xlabel)
     axes.set_ylabel(ylabel)
 
-    if legend:
+    if legend is not None:
         axes.legend(legend)
     axes.grid()
 
