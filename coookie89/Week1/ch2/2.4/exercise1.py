@@ -6,29 +6,26 @@ from IPython import display
 from d2l import torch as d2l
 
 
-def function(x):  # 題目給的f(x)函式
+def function(x):  # 題目給的f(x)函式, return y 值
     return x ** 3 - (1 / x)
 
 
-def use_svg_display():  # 顯示圖
+def use_svg_display():
     """Use the svg format to display a plot in Jupyter."""
     display.set_matplotlib_formats("svg")
 
 
-def set_figsize(figsize=(3.5, 2.5)):  # 設定圖大小
+def set_figsize(figsize=(3.5, 2.5)):
     """Set the figure size for matplotlib."""
     use_svg_display()
     d2l.plt.rcParams["figure.figsize"] = figsize
 
 
-def set_axes(axes, xlabel, ylabel, legend):  # 設定圖要顯示的東西
+def set_axes(axes, xlabel, ylabel, legend):
     """Set the axes for matplotlib."""
     axes.set_xlabel(xlabel)
     axes.set_ylabel(ylabel)
-    # axes.set_xscale(xscale)
-    # axes.set_yscale(yscale)
-    # axes.set_xlim(xlim)  # 設定x軸範圍
-    # axes.set_ylim(ylim)  # 設定y軸範圍
+
     if legend:
         axes.legend(legend)
     axes.grid()
@@ -43,7 +40,7 @@ def plot(
     fmts=("-", "m--", "g-.", "r:"),
     figsize=(3.5, 2.5),
     axes=None,
-):  # 畫出數據(X,Y)的點
+):
     """Plot data points."""
     if legend is None:
         legend = []

@@ -6,7 +6,6 @@ if __name__ == "__main__":
     A = torch.arange(20).reshape(5, 4)
     print("A==>\n", A, "\n")
     print("A.sum(axis=1)==>\n", A.sum(axis=1), "\n")
-    # print("\nA / A.sum(axis=1)==>\n",A / A.sum(axis=1))
 
     print("因為sum(axis=1)是把row的值加在一起,會產生1*5的matrix,沒辦法跟A(5*4)做除法")
 

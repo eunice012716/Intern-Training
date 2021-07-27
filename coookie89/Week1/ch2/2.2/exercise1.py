@@ -18,19 +18,18 @@ if __name__ == "__main__":
     data = pd.read_csv(data_path)
     print("data ==>\n", data, "\n")
 
-    m = data.isnull().sum(axis=0)  # 計算NaN每個col出現的次數
-    print("NaN在col的出現次數 ==>\n", m, "\n")
+    number_of_null = data.isnull().sum(axis=0)  # 計算NaN每個col出現的次數
+    print("NaN在col的出現次數 ==>\n", number_of_null, "\n")
 
-    nan_max_num = m.max()  # 計算NaN出現最多次的數量
+    nan_max_num = number_of_null.max()  # 計算NaN出現最多次的數量
 
     # 找出最多NaN的col index,並刪除該column
-    for index in m.index:
-        if m[index] == nan_max_num:
+    for index in number_of_null.index:
+        if number_of_null[index] == nan_max_num:
             print("要刪掉的column ==>\n", index, "\n")
-            temp = data.drop([index], axis=1)
-            print("刪除後的data ==>\n", temp, "\n")
+            droped_element = data.drop([index], axis=1)
+            print("刪除後的data ==>\n", droped_element, "\n")
 
     # 將series轉換成tensor format
-    temp = pd.get_dummies(data, dummy_na=True)
-    tensor_format = torch.tensor(temp.values)
+    tensor_format = torch.tensor(pd.get_dummies(data, dummy_na=True).values)
     print("轉換成tensor format ==>\n", tensor_format, "\n")
