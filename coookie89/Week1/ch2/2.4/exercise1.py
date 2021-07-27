@@ -21,16 +21,14 @@ def set_figsize(figsize=(3.5, 2.5)):  # 設定圖大小
     d2l.plt.rcParams["figure.figsize"] = figsize
 
 
-def set_axes(
-    axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend
-):  # 設定圖要顯示的東西
+def set_axes(axes, xlabel, ylabel, legend):  # 設定圖要顯示的東西
     """Set the axes for matplotlib."""
     axes.set_xlabel(xlabel)
     axes.set_ylabel(ylabel)
-    axes.set_xscale(xscale)
-    axes.set_yscale(yscale)
-    axes.set_xlim(xlim)  # 設定x軸範圍
-    axes.set_ylim(ylim)  # 設定y軸範圍
+    # axes.set_xscale(xscale)
+    # axes.set_yscale(yscale)
+    # axes.set_xlim(xlim)  # 設定x軸範圍
+    # axes.set_ylim(ylim)  # 設定y軸範圍
     if legend:
         axes.legend(legend)
     axes.grid()
@@ -42,10 +40,6 @@ def plot(
     xlabel=None,
     ylabel=None,
     legend=None,
-    xlim=None,
-    ylim=None,
-    xscale="linear",
-    yscale="linear",
     fmts=("-", "m--", "g-.", "r:"),
     figsize=(3.5, 2.5),
     axes=None,
@@ -74,14 +68,14 @@ def plot(
         Y = [Y]
     if len(X) != len(Y):
         X = X * len(Y)
-    # axes.cla()
+    axes.cla()
 
     for x, y, fmt in zip(X, Y, fmts):
         if len(x):
             axes.plot(x, y, fmt)
         else:
             axes.plot(y, fmt)
-    set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend)
+    set_axes(axes, xlabel, ylabel, legend)
 
 
 if __name__ == "__main__":
