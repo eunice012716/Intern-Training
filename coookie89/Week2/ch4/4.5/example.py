@@ -18,12 +18,11 @@ def l2_penalty(w):
     return torch.sum(w.pow(2)) / 2
 
 
-def train(lambd):
+def train(lambd, num_epochs, lr):
     """training loop (lambd為weight decay的懲罰項)"""
     w, b = init_params()
     net, loss = lambda X: d2l.linreg(X, w, b), d2l.squared_loss
-    num_epochs = 100
-    lr = 0.003
+
     animator = d2l.Animator(
         xlabel="epochs",
         ylabel="loss",
@@ -48,13 +47,13 @@ def train(lambd):
     print("L2 norm of w:", torch.norm(w).item())
 
 
-def train_concise(wd):
+def train_concise(wd, num_epochs, lr):
     """Concise Implementation"""
     net = nn.Sequential(nn.Linear(num_inputs, 1))
     for param in net.parameters():
         param.data.normal_()
-    loss = nn.MSELoss()
-    num_epochs, lr = 100, 0.003
+    loss_function = nn.MSELoss()
+
     # The bias parameter has not decayed
     trainer = torch.optim.SGD(
         [
@@ -73,15 +72,15 @@ def train_concise(wd):
     for epoch in range(num_epochs):
         for X, y in train_iter:
             trainer.zero_grad()
-            losses = loss(net(X), y)
+            losses = loss_function(net(X), y)
             losses.backward()
             trainer.step()
         if (epoch + 1) % 5 == 0:
             animator.add(
                 epoch + 1,
                 (
-                    d2l.evaluate_loss(net, train_iter, loss),
-                    d2l.evaluate_loss(net, test_iter, loss),
+                    d2l.evaluate_loss(net, train_iter, loss_function),
+                    d2l.evaluate_loss(net, test_iter, loss_function),
                 ),
             )
     print("L2 norm of w:", net[0].weight.norm().item())
@@ -92,6 +91,9 @@ if __name__ == "__main__":
     data_size_test = 100
     num_inputs = 200
     batch_size = 5
+
+    num_epochs = 100
+    lr = 0.003
 
     true_w, true_b = torch.ones((num_inputs, 1)) * 0.01, 0.05
     train_data = d2l.synthetic_data(true_w, true_b, data_size_train)
@@ -107,6 +109,6 @@ if __name__ == "__main__":
 
     print("Training with concise implementation-----------------\n")
     print("without Regularization==>\n")
-    train_concise(0)
+    train_concise(0, num_epochs, lr)
     print("using Weight Decay==>\n")
-    train_concise(3)
+    train_concise(3, num_epochs, lr)

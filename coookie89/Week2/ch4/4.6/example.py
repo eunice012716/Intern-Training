@@ -85,10 +85,12 @@ if __name__ == "__main__":
     lr = 0.5
     batch_size = 256
 
-    loss = nn.CrossEntropyLoss()
+    loss_function = nn.CrossEntropyLoss()
     train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size)
     trainer = torch.optim.SGD(net.parameters(), lr=lr)
-    d2l.train_ch3(net, train_iter, test_iter, loss, num_epochs, trainer)
+    d2l.train_ch3(
+        net, train_iter, test_iter, loss_function, num_epochs, trainer
+    )
 
     print("Training with concise implementation-----------------\n")
     net = nn.Sequential(
@@ -107,4 +109,6 @@ if __name__ == "__main__":
     net.apply(init_weights)
 
     trainer = torch.optim.SGD(net.parameters(), lr=lr)
-    d2l.train_ch3(net, train_iter, test_iter, loss, num_epochs, trainer)
+    d2l.train_ch3(
+        net, train_iter, test_iter, loss_function, num_epochs, trainer
+    )

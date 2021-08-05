@@ -10,24 +10,21 @@ def init_weights(m):
         nn.init.normal_(m.weight, std=0.01)
 
 
+def apply_activation_functions(activation_function):
+    return nn.Sequential(
+        nn.Flatten(),
+        nn.Linear(784, 256),
+        activation_function,
+        nn.Linear(256, 10),
+    )
+
+
 if __name__ == "__main__":
 
     nets = []
-    nets.append(
-        nn.Sequential(
-            nn.Flatten(), nn.Linear(784, 256), nn.ReLU(), nn.Linear(256, 10)
-        )
-    )
-    nets.append(
-        nn.Sequential(
-            nn.Flatten(), nn.Linear(784, 256), nn.Sigmoid(), nn.Linear(256, 10)
-        )
-    )
-    nets.append(
-        nn.Sequential(
-            nn.Flatten(), nn.Linear(784, 256), nn.Tanh(), nn.Linear(256, 10)
-        )
-    )
+    nets.append(apply_activation_functions(nn.ReLU()))
+    nets.append(apply_activation_functions(nn.Sigmoid()))
+    nets.append(apply_activation_functions(nn.Tanh()))
 
     batch_size = 256
     lr = 0.3
