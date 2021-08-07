@@ -33,7 +33,7 @@ def linreg(X, w, b):
 
 
 def squared_loss(y_hat, y):
-    """Squared loss."""
+    """squared_loss."""
     return (y_hat - y.reshape(y_hat.shape)) ** 2 / 2
 
 
@@ -52,20 +52,20 @@ if __name__ == "__main__":
 
     w = torch.normal(0, 0.01, size=(1,), requires_grad=True)
     b = torch.normal(0, 0.01, size=(1,), requires_grad=True)
-    net = linreg
-    loss = squared_loss
 
     for epoch in range(1, NUM_EPOCHS + 1):
         for X, y in data_iter(BATCH_SIZE, currents, voltages):
-            loss_ = loss(net(X, w, b), y)  # Minibatch loss in `X` and `y`
+            squared_loss_ = squared_loss(
+                linreg(X, w, b), y
+            )  # Minibatch squared_loss in `X` and `y`
             # Compute gradient on `l` with respect to [`w`, `b`]
-            loss_.sum().backward()
+            squared_loss_.sum().backward()
             sgd(
                 [w, b], LEARNING_RATE, BATCH_SIZE
             )  # Update parameters using their gradient
         with torch.no_grad():
-            train_l = loss(net(currents, w, b), voltages)
-            print(f"epoch {epoch}, loss {float(train_l.mean()):f}")
+            train_l = squared_loss(linreg(currents, w, b), voltages)
+            print(f"epoch {epoch}, squared_loss {float(train_l.mean()):f}")
 
     print("w: ", w)
     print("b: ", b)

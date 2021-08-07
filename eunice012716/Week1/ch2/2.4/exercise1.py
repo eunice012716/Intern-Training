@@ -11,18 +11,17 @@ def numerical_lim(f, x, h):
     return (f(x + h) - f(x)) / h
 
 
-def use_svg_display():  # @save
+def use_svg_display():
     """Use the svg format to display a plot in Jupyter."""
     display.set_matplotlib_formats("svg")
 
 
-def set_figsize(figsize=(3.5, 2.5)):  # @save
+def set_figsize(figsize=(3.5, 2.5)):
     """Set the figure size for matplotlib."""
     use_svg_display()
     d2l.plt.rcParams["figure.figsize"] = figsize
 
 
-# @save
 def set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend):
     """Set the axes for matplotlib."""
     axes.set_xlabel(xlabel)
@@ -31,12 +30,11 @@ def set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend):
     axes.set_yscale(yscale)
     axes.set_xlim(xlim)
     axes.set_ylim(ylim)
-    if legend:
+    if legend is not None:
         axes.legend(legend)
     axes.grid()
 
 
-# @save
 def plot(
     X,
     Y=None,
