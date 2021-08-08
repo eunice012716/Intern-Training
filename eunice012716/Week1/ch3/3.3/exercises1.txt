@@ -1,0 +1,12 @@
+1.
+torch.nn.MSELoss(size_average=None, reduce=None, reduction='mean')
+=> it creates a criterion that measures the mean squared error (squared L2 norm) between each element in the input x and target y.
+
+The unreduced (i.e. with reduction set to 'none') loss can be described as: l(x, y) = L = {l1, ..., lN}.T, ln = (xn - yn)^2, where N = the batch size
+If reduction is 'mean', l(x, y) = mean(L) // 取平均值
+If reduction is 'sum', l(x, y) = sum(L) // 取總和
+Since the default value of reduction is 'mean', if we replace nn.MSELoss(reduciton='sum') with nn.MSELoss(), the learning rate should be lower and num_epochs should be greater to have the nearly the same behavior.
+(試過很多次也不知道怎麼樣會一樣@@ 如果reduction設為sum代表loss對weight的變化更敏感 所以learning rate應該要小一點 但是我不知道怎麼讓他一樣就是了)
+
+
+
