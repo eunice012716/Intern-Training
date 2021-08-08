@@ -6,12 +6,12 @@ from torch import nn
 from d2l import torch as d2l
 
 BATCH_SIZE = 256
-
-NUM_INPUTS = 784  # 28*28 pixels
-NUM_OUTPUTS = 10  # 分成10個類別
-
-NUM_EPOCHS = 10
-LR = 0.1  # learning rate
+NUM_INPUTS, NUM_OUTPUTS = (
+    784,
+    10,
+)  # NUM_INPUTS: 28*28 =784 pixels, NUM_OUTPUTS: 分成10個類別
+NUM_HIDDENS = [1024, 512, 256, 128]
+NUM_EPOCHS, LR = 10, 0.1
 
 
 def relu(X):
@@ -27,20 +27,19 @@ def net(X):
 
 
 if __name__ == "__main__":
-
     train_iter, test_iter = d2l.load_data_fashion_mnist(BATCH_SIZE)
+    scale = 0.01  # to scale the parameters to this range
 
-    num_hiddens = [1024, 512, 256, 128]
-
-    for num_hidden_test in num_hiddens:
+    for num_hidden_test in NUM_HIDDENS:
         print("hidden layer node num = ", num_hidden_test, "\n")
 
         W1 = nn.Parameter(
-            torch.randn(NUM_INPUTS, num_hidden_test, requires_grad=True) * 0.01
+            torch.randn(NUM_INPUTS, num_hidden_test, requires_grad=True) * scale
         )
         b1 = nn.Parameter(torch.zeros(num_hidden_test, requires_grad=True))
         W2 = nn.Parameter(
-            torch.randn(num_hidden_test, NUM_OUTPUTS, requires_grad=True) * 0.01
+            torch.randn(num_hidden_test, NUM_OUTPUTS, requires_grad=True)
+            * scale
         )
         b2 = nn.Parameter(torch.zeros(NUM_OUTPUTS, requires_grad=True))
 
