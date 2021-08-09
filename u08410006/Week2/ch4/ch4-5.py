@@ -19,18 +19,17 @@ def l2_penalty(w):
     return torch.sum(w.pow(2)) / 2
 
 
-def train(lambd):
+def net(X, w, b):
+    """
+    Linear_Regression
+    """
+    return d2l.linreg(X, w, b)
+
+
+def train(lambd, NUM_EPOCHS, LR):
     """
     Defining the Training Loop
     """
-
-    def net(X, w, b):
-        """
-        Linear_Regression
-        """
-        return d2l.linreg(X, w, b)
-
-    NUM_EPOCHS, LR = 100, 0.003
     w, b = init_params()
     animator = d2l.Animator(
         xlabel="epochs",
@@ -57,11 +56,10 @@ def train(lambd):
     print("L2 norm of w:", torch.norm(w).item())
 
 
-def train_concise(wd):
+def train_concise(wd, NUM_EPOCHS, LR):
     """
     specify the weight decay hyperparameter directly through weight_decay when instantiating our optimizer
     """
-    NUM_EPOCHS, LR = 100, 0.003
     net = nn.Sequential(nn.Linear(NUM_INPUTS, 1))
     for param in net.parameters():
         param.data.normal_()
@@ -98,6 +96,7 @@ def train_concise(wd):
 
 
 if __name__ == "__main__":
+    NUM_EPOCHS, LR = 100, 0.003
     N_TRAIN, N_TEST, NUM_INPUTS, BATCH_SIZE = 20, 100, 200, 5
     true_w, true_b = torch.ones((NUM_INPUTS, 1)) * 0.01, 0.05
     train_data = d2l.synthetic_data(true_w, true_b, N_TRAIN)
@@ -105,7 +104,7 @@ if __name__ == "__main__":
     test_data = d2l.synthetic_data(true_w, true_b, N_TEST)
     test_iter = d2l.load_array(test_data, BATCH_SIZE, is_train=False)
 
-    train(lambd=0)
-    train(lambd=3)
-    train_concise(0)
-    train_concise(3)
+    train(0, NUM_EPOCHS, LR)
+    train(3, NUM_EPOCHS, LR)
+    train_concise(0, NUM_EPOCHS, LR)
+    train_concise(3, NUM_EPOCHS, LR)

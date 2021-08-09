@@ -10,46 +10,59 @@ import pandas as pd
 from torch import nn
 from d2l import torch as d2l
 
+DATA_HUB = dict()
+DATA_URL = "http://d2l-data.s3-accelerate.amazonaws.com/"
+
+DATA_HUB["kaggle_house_train"] = (
+    DATA_URL + "kaggle_house_pred_train.csv",
+    "585e9cc93e70b39160e7921475f9bcd7d31219ce",
+)
+
+DATA_HUB["kaggle_house_test"] = (
+    DATA_URL + "kaggle_house_pred_test.csv",
+    "fa19780a7b011d9b009e8bff8e99922a8ee2eb90",
+)
+
 
 def download(name, cache_dir=os.path.join("..", "data")):
     """Download a file inserted into DATA_HUB, return the local filename."""
     assert name in DATA_HUB, f"{name} does not exist in {DATA_HUB}."
     url, sha1_hash = DATA_HUB[name]
     os.makedirs(cache_dir, exist_ok=True)
-    fname = os.path.join(cache_dir, url.split("/")[-1])
-    if os.path.exists(fname):
+    file_name = os.path.join(cache_dir, url.split("/")[-1])
+    if os.path.exists(file_name):
         sha1 = hashlib.sha1()
-        with open(fname, "rb") as f:
+        with open(file_name, "rb", encoding="UTF-8") as input_file:
             while True:
-                data = f.read(1048576)
+                data = input_file.read(1048576)
                 if not data:
                     break
                 sha1.update(data)
         if sha1.hexdigest() == sha1_hash:
-            return fname  # Hit cache
-    print(f"Downloading {fname} from {url}...")
-    r = requests.get(url, stream=True, verify=True)
-    with open(fname, "wb") as f:
-        f.write(r.content)
-    return fname
+            return file_name  # Hit cache
+    print(f"Downloading {file_name} from {url}...")
+    request_get = requests.get(url, stream=True, verify=True)
+    with open(file_name, "wb", encoding="UTF-8") as output_file:
+        output_file.write(request_get.content)
+    return file_name
 
 
-def download_extract(name, folder=None):
+def download_and_extract_zip_file(name, folder=None):
     """Download and extract a zip/tar file."""
-    fname = download(name)
-    base_dir = os.path.dirname(fname)
-    data_dir, ext = os.path.splitext(fname)
+    file_name = download(name)
+    base_dir = os.path.dirname(file_name)
+    data_dir, ext = os.path.splitext(file_name)
     if ext == ".zip":
-        fp = zipfile.ZipFile(fname, "r")
+        fp = zipfile.ZipFile(file_name, "r")
     elif ext in (".tar", ".gz"):
-        fp = tarfile.open(fname, "r")
+        fp = tarfile.open(file_name, "r")
     else:
         assert False, "Only zip/tar files can be extracted."
     fp.extractall(base_dir)
     return os.path.join(base_dir, folder) if folder else data_dir
 
 
-def download_all():
+def download_all(DATA_HUB):
     """Download all files in the DATA_HUB."""
     for name in DATA_HUB:
         download(name)
@@ -68,7 +81,7 @@ def log_rmse(net, features, labels):
     # To further stabilize the value when the logarithm is taken, set the
     # value less than 1 as 1
     clipped_preds = torch.clamp(net(features), 1, float("inf"))
-    rmse = torch.sqrt(loss(torch.log(clipped_preds), torch.log(labels)))
+    rmse = torch.sqrt(nn.MSELoss(torch.log(clipped_preds), torch.log(labels)))
     return rmse.item()
 
 
@@ -86,7 +99,7 @@ def train(
     """
     Defining the Training Loop
     """
-    train_ls, test_ls = [], []
+    train_log_rmse, test_log_rmse = [], []
     train_iter = d2l.load_array((train_features, train_labels), batch_size)
     # The Adam optimization algorithm is used here
     optimizer = torch.optim.Adam(
@@ -95,18 +108,18 @@ def train(
     for _ in range(num_epochs):
         for X, y in train_iter:
             optimizer.zero_grad()
-            train_loss = loss(net(X), y)
+            train_loss = nn.MSELoss(net(X), y)
             train_loss.backward()
             optimizer.step()
-        train_ls.append(log_rmse(net, train_features, train_labels))
+        train_log_rmse.append(log_rmse(net, train_features, train_labels))
         if test_labels is not None:
-            test_ls.append(log_rmse(net, test_features, test_labels))
-    return train_ls, test_ls
+            test_log_rmse.append(log_rmse(net, test_features, test_labels))
+    return train_log_rmse, test_log_rmse
 
 
-def get_k_fold_data(k, i, X, y):
+def get_data_in_k_fold_cross_validation_procedure(k, i, X, y):
     """
-    returns the  ith  fold of the data in a  K-fold cross-validation procedure.
+    returns the  i-th  fold of the data in a  K-fold cross-validation procedure.
     It proceeds by slicing out the  i-th  segment as validation data and returning the rest as training data.
     """
     assert k > 1
@@ -133,7 +146,9 @@ def k_fold(
     """
     train_l_sum, valid_l_sum = 0, 0
     for i in range(k):
-        data = get_k_fold_data(k, i, X_train, y_train)
+        data = get_data_in_k_fold_cross_validation_procedure(
+            k, i, X_train, y_train
+        )
         net = get_net()
         train_ls, valid_ls = train(
             net, *data, num_epochs, learning_rate, weight_decay, batch_size
@@ -200,19 +215,6 @@ def train_and_pred(
 
 
 if __name__ == "__main__":
-    DATA_HUB = dict()
-    DATA_URL = "http://d2l-data.s3-accelerate.amazonaws.com/"
-
-    DATA_HUB["kaggle_house_train"] = (
-        DATA_URL + "kaggle_house_pred_train.csv",
-        "585e9cc93e70b39160e7921475f9bcd7d31219ce",
-    )
-
-    DATA_HUB["kaggle_house_test"] = (
-        DATA_URL + "kaggle_house_pred_test.csv",
-        "fa19780a7b011d9b009e8bff8e99922a8ee2eb90",
-    )
-
     train_data = pd.read_csv(download("kaggle_house_train"))
     test_data = pd.read_csv(download("kaggle_house_test"))
 
@@ -245,7 +247,6 @@ if __name__ == "__main__":
     train_labels = torch.tensor(
         train_data.SalePrice.values.reshape(-1, 1), dtype=torch.float32
     )
-    loss = nn.MSELoss()
     in_features = train_features.shape[1]
 
     k, num_epochs, lr, weight_decay, batch_size = 5, 100, 5, 0, 64

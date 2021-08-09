@@ -12,13 +12,14 @@ def init_weights(m):
 
 
 if __name__ == "__main__":
+    BATCH_SIZE, LR, NUM_EPOCHS = 256, 0.1, 10
+
     net = nn.Sequential(
         nn.Flatten(), nn.Linear(784, 256), nn.ReLU(), nn.Linear(256, 10)
     )
 
     net.apply(init_weights)
 
-    BATCH_SIZE, LR, NUM_EPOCHS = 256, 0.1, 10
     loss = nn.CrossEntropyLoss()
     trainer = torch.optim.SGD(net.parameters(), lr=LR)
 

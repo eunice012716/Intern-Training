@@ -11,7 +11,7 @@ def relu(X):
     return torch.max(X, a)
 
 
-def net(X):
+def build_net(X):
     """
     reshape and implement our model
     """
@@ -21,7 +21,6 @@ def net(X):
 
 
 if __name__ == "__main__":
-
     BATCH_SIZE = 256
     NUM_INPUTS, NUM_OUTPUTS, NUM_HIDDENS = 784, 10, 256
     NUM_EPOCHS, LR = 10, 0.1
@@ -38,9 +37,14 @@ if __name__ == "__main__":
 
     params = [W1, b1, W2, b2]
 
-    loss = nn.CrossEntropyLoss()
-
     updater = torch.optim.SGD(params, lr=LR)
-    d2l.train_ch3(net, train_iter, test_iter, loss, NUM_EPOCHS, updater)
+    d2l.train_ch3(
+        build_net,
+        train_iter,
+        test_iter,
+        nn.CrossEntropyLoss(),
+        NUM_EPOCHS,
+        updater,
+    )
 
-    d2l.predict_ch3(net, test_iter)
+    d2l.predict_ch3(build_net, test_iter)

@@ -2,6 +2,8 @@ import torch
 from torch import nn
 from d2l import torch as d2l
 
+DROPOUT1, DROPOUT2 = 0.2, 0.5
+
 
 def dropout_layer(X, dropout):
     """
@@ -50,11 +52,11 @@ class Net(nn.Module):
         # Use dropout only when training the model
         if self.training is True:
             # Add a dropout layer after the first fully connected layer
-            H1 = dropout_layer(H1, dropout1)
+            H1 = dropout_layer(H1, DROPOUT1)
         H2 = self.relu(self.lin2(H1))
         if self.training is True:
             # Add a dropout layer after the second fully connected layer
-            H2 = dropout_layer(H2, dropout2)
+            H2 = dropout_layer(H2, DROPOUT2)
         out = self.lin3(H2)
         return out
 
@@ -62,7 +64,6 @@ class Net(nn.Module):
 if __name__ == "__main__":
     NUM_INPUTS, NUM_OUTPUTS, NUM_HIDDENS1, NUM_HIDDENS2 = 784, 10, 256, 256
     NUM_EPOCHS, LR, BATCH_SIZE = 10, 0.5, 256
-    dropout1, dropout2 = 0.2, 0.5
 
     X = torch.arange(16, dtype=torch.float32).reshape((2, 8))
     print(X)
@@ -82,11 +83,11 @@ if __name__ == "__main__":
         nn.Linear(784, 256),
         nn.ReLU(),
         # Add a dropout layer after the first fully connected layer
-        nn.Dropout(dropout1),
+        nn.Dropout(DROPOUT1),
         nn.Linear(256, 256),
         nn.ReLU(),
         # Add a dropout layer after the second fully connected layer
-        nn.Dropout(dropout2),
+        nn.Dropout(DROPOUT2),
         nn.Linear(256, 10),
     )
 
