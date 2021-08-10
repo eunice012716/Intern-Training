@@ -13,15 +13,16 @@ from d2l import torch as d2l
 DATA_HUB = dict()
 DATA_URL = "http://d2l-data.s3-accelerate.amazonaws.com/"
 
-DATA_HUB["kaggle_house_train"] = (
-    DATA_URL + "kaggle_house_pred_train.csv",
-    "585e9cc93e70b39160e7921475f9bcd7d31219ce",
-)
-
-DATA_HUB["kaggle_house_test"] = (
-    DATA_URL + "kaggle_house_pred_test.csv",
-    "fa19780a7b011d9b009e8bff8e99922a8ee2eb90",
-)
+DATA_HUB = {
+    "kaggle_house_train": (
+        DATA_URL + "kaggle_house_pred_train.csv",
+        "585e9cc93e70b39160e7921475f9bcd7d31219ce",
+    ),
+    "kaggle_house_test": (
+        DATA_URL + "kaggle_house_pred_test.csv",
+        "fa19780a7b011d9b009e8bff8e99922a8ee2eb90",
+    ),
+}
 
 
 def download(name, cache_dir=os.path.join("..", "data")):
@@ -62,9 +63,9 @@ def download_and_extract_zip_file(name, folder=None):
     return os.path.join(base_dir, folder) if folder else data_dir
 
 
-def download_all(DATA_HUB):
+def download_all(data_hub=DATA_HUB):
     """Download all files in the DATA_HUB."""
-    for name in DATA_HUB:
+    for name in data_hub:
         download(name)
 
 

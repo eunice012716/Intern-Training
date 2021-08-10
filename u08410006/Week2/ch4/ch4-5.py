@@ -26,7 +26,7 @@ def net(X, w, b):
     return d2l.linreg(X, w, b)
 
 
-def train(lambd, NUM_EPOCHS, LR):
+def train(lambd, num_epochs, lr):
     """
     Defining the Training Loop
     """
@@ -35,16 +35,16 @@ def train(lambd, NUM_EPOCHS, LR):
         xlabel="epochs",
         ylabel="loss",
         yscale="log",
-        xlim=[5, NUM_EPOCHS],
+        xlim=[5, num_epochs],
         legend=["train", "test"],
     )
-    for epoch in range(NUM_EPOCHS):
+    for epoch in range(num_epochs):
         for X, y in train_iter:
             # The L2 norm penalty term has been added, and broadcasting
             # makes `l2_penalty(w)` a vector whose length is `BATCH_SIZE`
             loss = d2l.squared_loss(net(X), y) + lambd * l2_penalty(w)
             loss.sum().backward()
-            d2l.sgd([w, b], LR, BATCH_SIZE)
+            d2l.sgd([w, b], lr, BATCH_SIZE)
         if (epoch + 1) % 5 == 0:
             animator.add(
                 epoch + 1,
@@ -56,7 +56,7 @@ def train(lambd, NUM_EPOCHS, LR):
     print("L2 norm of w:", torch.norm(w).item())
 
 
-def train_concise(wd, NUM_EPOCHS, LR):
+def train_concise(wd, num_epochs, lr):
     """
     specify the weight decay hyperparameter directly through weight_decay when instantiating our optimizer
     """
@@ -69,16 +69,16 @@ def train_concise(wd, NUM_EPOCHS, LR):
             {"params": net[0].weight, "weight_decay": wd},
             {"params": net[0].bias},
         ],
-        lr=LR,
+        lr=lr,
     )
     animator = d2l.Animator(
         xlabel="epochs",
         ylabel="loss",
         yscale="log",
-        xlim=[5, NUM_EPOCHS],
+        xlim=[5, num_epochs],
         legend=["train", "test"],
     )
-    for epoch in range(NUM_EPOCHS):
+    for epoch in range(num_epochs):
         for X, y in train_iter:
             trainer.zero_grad()
             loss = nn.MSELoss(net(X), y)
