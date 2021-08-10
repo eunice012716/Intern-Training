@@ -3,7 +3,7 @@ from torch import nn
 from d2l import torch as d2l
 
 BATCH_SIZE, LR, NUM_EPOCHS = 256, 0.1, 10
-ACTIVATE_FUNC = [nn.ReLU(), nn.Sigmoid(), nn.Tanh()]
+ACTIVATE_FUNCS = [nn.ReLU(), nn.Sigmoid(), nn.Tanh()]
 
 
 def init_weights(m):
@@ -16,7 +16,7 @@ if __name__ == "__main__":
         net = nn.Sequential(
             nn.Flatten(),
             nn.Linear(784, 256),
-            ACTIVATE_FUNC[i],
+            ACTIVATE_FUNCS[i],
             nn.Linear(256, 10),
         )
         net.apply(init_weights)

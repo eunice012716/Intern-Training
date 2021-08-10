@@ -2,7 +2,7 @@ import torch
 from d2l import torch as d2l
 
 
-def modified_ReLU(a=int, b=int, c=int, x=torch.Tensor):
+def modified_ReLU(a: int, b: int, c: int, x: torch.Tensor):
     num = x.shape[0]
     modified_x = torch.zeros(num)
     for i in range(0, num):
@@ -11,7 +11,7 @@ def modified_ReLU(a=int, b=int, c=int, x=torch.Tensor):
     return modified_x
 
 
-def aggregating_ReLU(a=int, b=int, c=int, d=int, x=torch.Tensor):
+def aggregating_ReLU(a: int, b: int, c: int, d: int, x: torch.Tensor):
     num = x.shape[0]
     aggregating_x = torch.zeros(num)
     for i in range(0, num):
