@@ -25,7 +25,7 @@ pre-commit install --hook-type pre-push --config .pre-push-config.yaml
 | Week1 | 2021/07/18 | 2021/07/25 | 2021/07/21 | 2021/07/27 |
 | Week2 |   | 2021/08/09 |   |   |
 | Week3 |   |   |   |   |
-| Week4 |   |   |   |   |
+| Week4 | 2021/08/18 |   |   |   |
 | Week5 |   |   |   |   |
 | Week6 |   |   |   |   |
 | Week7 |   |   |   |   |
